@@ -49,6 +49,8 @@ Usamos el modelo vista-controlador para estructurar el proyecto. **Creamos un CR
 * **views --> MovieRouter.js**: En este archivo gestionamos la ruta /movies. Cada endpoint dentro de esa ruta llamará a una función.
 * **controllers --> MovieControllers.js**: En este archivo creamos cada función que usarán los endpoints. Se añaden aquí las funciones del controller, que acceden a las funciones del modelo.
 * **models --> MovieModel.js**: En este archivo creamos las funciones que acceden a los datos de la base de datos.
+* **config --> winston.js**: En este archivo se crea la configuración para que se guarden los logs de la aplicación.
+* **logs**: Dentro de este directorio se crea el archivo de logs.
 
 ## Creación de la estructura del proyecto
 * **index.js**: creamos el archivo con el siguiente contenido: 
