@@ -35,7 +35,7 @@ sequelize db:seed:all
 
 ## Uso de la API
 
-Dejo enlace a colección de postman, en donde están todos los endpoints para poder manipular la base de datos: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/11138723-d2394b28-e83f-46c3-91ec-a24a1f2de6d6?action=collection%2Ffork&collection-url=entityId%3D11138723-d2394b28-e83f-46c3-91ec-a24a1f2de6d6%26entityType%3Dcollection%26workspaceId%3Df063660d-fd06-4b33-a75b-f9e5a3dfcbcd)
+Botón para usar la colección de postman, en donde están todos los endpoints para poder manipular la base de datos: [![Ejecutar en Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/11138723-d2394b28-e83f-46c3-91ec-a24a1f2de6d6?action=collection%2Ffork&collection-url=entityId%3D11138723-d2394b28-e83f-46c3-91ec-a24a1f2de6d6%26entityType%3Dcollection%26workspaceId%3Df063660d-fd06-4b33-a75b-f9e5a3dfcbcd)
 
 ## Tecnologías utilizadas en el proyecto:
 
