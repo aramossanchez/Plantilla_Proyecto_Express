@@ -3,7 +3,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     
-    await queryInterface.bulkInsert('contains', [{id:1,cantidad:"$5.25B",ingredientId:29,recipeId:82},
+    await queryInterface.bulkInsert('contains', [
+    {id:1,cantidad:"$5.25B",ingredientId:29,recipeId:82},
     {id:2,cantidad:"$427.28M",ingredientId:9,recipeId:20},
     {id:3,cantidad:"n/a",ingredientId:84,recipeId:54},
     {id:4,cantidad:"$580.22M",ingredientId:36,recipeId:71},
@@ -202,7 +203,8 @@ module.exports = {
     {id:197,cantidad:"$50.64M",ingredientId:80,recipeId:15},
     {id:198,cantidad:"$5.56B",ingredientId:81,recipeId:9},
     {id:199,cantidad:"n/a",ingredientId:53,recipeId:43},
-    {id:200,cantidad:"$8.45B",ingredientId:59,recipeId:84}], {});
+    {id:200,cantidad:"$8.45B",ingredientId:59,recipeId:84}
+  ], {});
     
   },
 
