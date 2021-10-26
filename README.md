@@ -1,15 +1,56 @@
 # Inicio de proyecto Express
+
+## Proyecto en el que gestionamos una base de datos en la que se guardan recetas de cocina. Existen las tablas **ingredients**, **recipes** y **contains**. Tanto la tabla ingredients como la tabla recipes se relacionan con la tabla contains en una relación 1:N.
+
 ## Pre-requisitos del proyecto:
+
 * Instalamos **Nodejs** en nuestro equipo, descargándolo de su página oficial
 https://nodejs.org/
-<br>
 
-* Iniciamos un proyecto **node** en el directorio elegido:
+* Clonamos el proyecto en nuestro equipo con git bash:
 ```
-npm init
+$git clone 'url-del-repositorio'
 ```
+
+* Instalamos todas las dependecias con el siguiente comando:
+```
+npm install
+```
+
+## Creación de la base de datos
+
+Tras modificar el archivo /config/config.json con los datos de nuestro servidor mysql (username, password, database y host), ejecutaremos los siguientes comandos:
+* **Creación de la base de datos**:
+```
+sequelize db:create
+```
+* **Creación de las tablas**:
+```
+sequelize db:migrate
+```
+* **Creación de los registros**:
+```
+sequelize db:seed:all
+```
+
+## Uso de la API
+
+Dejo enlace a colección de postman, en donde están todos los endpoints para poder manipular la base de datos: <div class="postman-run-button"
+data-postman-action="collection/fork"
+data-postman-var-1="11138723-d2394b28-e83f-46c3-91ec-a24a1f2de6d6"
+data-postman-collection-url="entityId=11138723-d2394b28-e83f-46c3-91ec-a24a1f2de6d6&entityType=collection&workspaceId=f063660d-fd06-4b33-a75b-f9e5a3dfcbcd"></div>
+<script type="text/javascript">
+  (function (p,o,s,t,m,a,n) {
+    !p[s] && (p[s] = function () { (p[t] || (p[t] = [])).push(arguments); });
+    !o.getElementById(s+t) && o.getElementsByTagName("head")[0].appendChild((
+      (n = o.createElement("script")),
+      (n.id = s+t), (n.async = 1), (n.src = m), n
+    ));
+  }(window, document, "_pm", "PostmanRunObject", "https://run.pstmn.io/button.js"));
+</script>
 
 ## Tecnologías utilizadas en el proyecto:
+
 * **express**: Instalamos express en nuestro proyecto:
 ```
 npm install express
@@ -42,178 +83,57 @@ npm install morgan
 ```
 npm install wiston
 ```
+* **sequelize**: Instalamos sequelize en nuestro proyecto, haciendo que podamos conectarnos y manipular la base de datos.
+```
+npm install sequelize-cli -g
+npm install --save sequelize mysql2 sequelize-cli
+sequelize init
+```
 ## Explicación de la estructura del proyecto
+
 Usamos el modelo vista-controlador para estructurar el proyecto. **Creamos un CRUD básico**. En el proyecto existirá la siguiente estructura:
+
 * **index.js**: Este es el archivo principal. En este archivo se llama al archivo de las rutas, se gestiona la creación de logs, se gestiona la ruta inicial (/) y se arranca el servidor.
-* **router.js**: En este archivo se gestiona las diferentes vistas que puede tener la aplicación. Se creará una ruta por cada tabla de la base de datos a la que queramos acceder.
-* **views --> MovieRouter.js**: En este archivo gestionamos la ruta /movies. Cada endpoint dentro de esa ruta llamará a una función.
-* **controllers --> MovieControllers.js**: En este archivo creamos cada función que usarán los endpoints. Se añaden aquí las funciones del controller, que acceden a las funciones del modelo.
-* **models --> MovieModel.js**: En este archivo creamos las funciones que acceden a los datos de la base de datos.
-* **config --> winston.js**: En este archivo se crea la configuración para que se guarden los logs de la aplicación.
+
+* **config**
+    * **winston.js**: En este archivo se crea la configuración para que se guarden los logs de la aplicación.
+    * **config.json**: En este archivo se gestiona la configuración para conectar con la base de datos. Se crea de manera automática con **sequelize**.
+
 * **logs**: Dentro de este directorio se crea el archivo de logs.
 
-## Creación de la estructura del proyecto
-* **index.js**: creamos el archivo con el siguiente contenido: 
-```
-const express = require ("express");
-const colors = require("colors");
-const morgan = require("morgan");
-const logger = require("./config/winston.js");
-const router = require ("./router.js");
-const app = express();
-const PORT = 3000;
+* **db.js**: En este archivo se gestiona el acceso a la base de datos.
 
-app.use(morgan("combined", {stream: logger.stream}));
-app.use(express.json());
+* **router.js**: En este archivo se gestiona las diferentes vistas que puede tener la aplicación. Se creará una ruta por cada tabla de la base de datos a la que queramos acceder (Ingrediente, Recipes y Contains).
 
-app.get("/", (req, res) => res.send("Bienvenido a Express") );
+* **views**
+    * **IngredientRouter.js**: En este archivo gestionamos la ruta /ingredients. Cada endpoint dentro de esa ruta llamará a una función.
+    * **RecipeRouter.js**: En este archivo gestionamos la ruta /recipes. Cada endpoint dentro de esa ruta llamará a una función.
+    * **ContainRouter.js**: En este archivo gestionamos la ruta /contains. Cada endpoint dentro de esa ruta llamará a una función.
 
-app.use(router);
+* **controllers**
+    * **IngredientController.js**: En este archivo creamos cada función que usarán los endpoints. Se añaden aquí las funciones del controller, que acceden a las funciones del modelo.
+    * **RecipeController.js**: En este archivo creamos cada función que usarán los endpoints. Se añaden aquí las funciones del controller, que acceden a las funciones del modelo.
+    * **ContainController.js**: En este archivo creamos cada función que usarán los endpoints. Se añaden aquí las funciones del controller, que acceden a las funciones del modelo.
 
-app.listen(PORT, ()=>{
-    console.log(`Server on port ${PORT}`.bgBlue.white);
-});
-```
-* **config**: creamos la carpeta **config**, y en ella el archivo **winston.js**:
-    * **winston.js**: en este archivo añadimos lo siguiente:
-    ```
-    const winston = require("winston");
-    const logger = winston.createLogger({
-        transports: [
-            new winston.transports.File({ filename: 'logs/log-file.log' }),
-            new winston.transports.Console()
-        ],
-        format: winston.format.combine(
-            winston.format.timestamp(), winston.format.json()
-        ),
-        exitOnError: false,
-    });
-    logger.stream = {
-        write: function(message, encoding) {
-            logger.info(message);
-        }
-    }
-    module.exports = logger;
-    ```
-* **logs**: creamos la carpeta **logs**
-* **router.js**: creamos el archivo y añadimos lo siguiente:
-```
-const MovieRouter = require("./views/MovieRouter.js");
-const router = require("express").Router();
+* **migrations**
+    * **01-create-ingredient.js**: Al introducir el comando sequelize model:generate --name ingredient --attributes nombre:string se genera este archivo, y se crea la estructura de datos que tendrá la tabla ingredients (se genera con otro nombre, pero se lo cambio para controlar el orden de ejecución de estos archivos, ya que sequelize los lee y los ejecuta por orden alfabético).
+    * **02-create-recipe.js**: Al introducir el comando sequelize model:generate --name recipe --attributes nombre:string,descripcion:string se genera este archivo, y se crea la estructura de datos que tendrá la tabla recipes (se genera con otro nombre, pero se lo cambio para controlar el orden de ejecución de estos archivos, ya que sequelize los lee y los ejecuta por orden alfabético).
+    * **03-create-contain.js**: Al introducir el comando sequelize model:generate --name contain --attributes cantidad:string se genera este archivo, y se crea la estructura de datos que tendrá la tabla contain (se genera con otro nombre, pero se lo cambio para controlar el orden de ejecución de estos archivos, ya que sequelize los lee y los ejecuta por orden alfabético). En este archivo se añaden los campos que serán FK de las otras 2 tablas de la base de datos.
 
-router.use("/movies", MovieRouter);
+* **models**
+    * **index.js**: Gestiona la conexión con la base de datos.
+    * **ingredient.js**: Archivo creado al usar el comando sequelize model:generate... En este archivo está creado el esquema de datos que sigue la tabla ingredients de la base de datos. En este archivo añadimos también que su PK será FK de la tabla contains, y el nombre que llevará esa FK en esa tabla.
+    * **recipe.js**: Archivo creado al usar el comando sequelize model:generate... En este archivo está creado el esquema de datos que sigue la tabla recipes de la base de datos. En este archivo añadimos también que su PK será FK de la tabla contains, y el nombre que llevará esa FK en esa tabla.
+    * **contain.js**: Archivo creado al usar el comando sequelize model:generate... En este archivo está creado el esquema de datos que sigue la tabla contains de la base de datos. En este archivo añadimos también que tendrá 2 FK, y le indicamos de que tablas vienen esas columnas.
 
-module.exports = router;
-```
-* **views**: creamos la carpeta **views**, y en ella el archivo siguiente:
-    * **MovieRouter.js**: en este archivo añadimos lo siguiente:
-    ```
-    const expresss = require ("express");
-    const router = expresss.Router();
+* **seeders**:
+    * **01-demo-ingredient**: Se genera plantilla para la creación de registros para la tabla ingredient, tras introducir el comando sequelize seed:generate --name demo-ingredient.
+    * **02-demo-recipe**: Se genera plantilla para la creación de registros para la tabla ingredient, tras introducir el comando sequelize seed:generate --name demo-ingredient.
+    * **03-demo-contain**: Se genera plantilla para la creación de registros para la tabla ingredient, tras introducir el comando sequelize seed:generate --name demo-ingredient.
 
-    const MovieController = require ("../controllers/MovieController.js");
-
-    router.get("/", MovieController.getAll);
-
-    router.get("/:id", MovieController.getById);
-
-    router.post("/", MovieController.postMovie);
-
-    router.put("/:id", MovieController.updateMovie);
-
-    router.delete("/:id", MovieController.deleteMovie);
-
-    module.exports = router;
-    ```
-* **controllers**: creamos la carpeta **controllers**, y en ella el archivo siguiente:
-    * **MovieController**: en este archivo añadimos lo siguiente:
-    ```
-    const movies = require("../models/MovieModel.js");
-
-    const MovieController = {};
-
-    MovieController.getAll =  (req, res) =>{
-        res.json(movies.findAll());
-    };
-
-    MovieController.getById = (req,res) =>{
-        res.json(movies.findById(req.params.id));
-    };
-
-    MovieController.postMovie = (req, res) =>{
-        const id = req.body.id;
-        const title = req.body.title;
-        res.json(movies.post({id, title}));
-    };
-
-    MovieController.updateMovie = (req,res) => {
-        const id = req.params.id;
-        const body = req.body;
-        res.json(movies.update({id, ...body})); //SE ASIGNA DESDE EL PRIMER ELEMENTO DEL OBJETO (id) Y LUEGO SE PASA TODO LOS PARAMETROS QUE ENTRARAN POR EL BODY. SE HACE CON LOS ... (...body)
-    };
-
-    MovieController.deleteMovie = (req,res) =>{
-        res.send(movies.delete(req.params.id));
-    }
-
-    module.exports = MovieController;
-    ```
-* **models**: creamos la carpeta **models**, y en ella el archivo siguiente:
-    * **MovieModel**: en este archivo añadimos lo siguiente:
-    ```
-    let db = require('../db.js');
-
-    MovieModel = {};
-
-    //DEFINO FUNCIONES
-    MovieModel.findAll = () => db;
-
-    MovieModel.findById = (id) => db.find(movie => movie.id == id);
-
-    MovieModel.post = (newMovie) => {
-        db.push(newMovie);
-        return newMovie;
-    };
-
-    MovieModel.update = (newMovie) =>{
-        let movies = db.filter(movie => movie.id != newMovie.id);
-        movies.push(newMovie);
-        db = movies;
-        return newMovie;
-    };
-
-    MovieModel.delete = (id) =>{
-        let movies = db.filter(movie => movie.id != id);
-        db = movies;
-        return `Registro ${id} eliminado correctamente`;
-    };
-
-    //EXPORTO
-    module.exports = MovieModel;
-    ```
-* **db.js**: creamos el archivo (simulando una base de datos) y añadimos los siguientes datos de prueba:
-```
-module.exports = [
-    {id: 1, title: "Soy leyenda"},
-    {id: 2, title: "El risas"},
-    {id: 3, title: "Yo robot"},
-    {id: 4, title: "El hoyo"},
-    {id: 5, title: "Matrix"}
-];
-```
-**¡IMPORTANTE!** --> Creamos el archivo .gitignore, e incluimos lo siguiente (esencial para no subir la carpeta **node_modules** a github cuando hagamos push a nuestros archivos):
+* **¡IMPORTANTE!** --> Creamos el archivo **.gitignore**, e incluimos lo siguiente (esencial para no subir la carpeta **node_modules** a github cuando hagamos push a nuestros archivos, entre otros):
 ```
 /node_modules
 /logs
 package-lock.json
 ```
-## Prueba para saber si el proyecto funciona
-Clonar el proyecto en local y ejecutar el siguiente comando (para instalar todos los modulos necesarios en tu equipo):
-```
-npm i
-```
-Iniciar el servidor con el comando:
-```
-npm run dev
-```
-Entrar en el navegador e indicar la siguiente url: http://localhost:3000/user (debe mostrarnos un objeto json).

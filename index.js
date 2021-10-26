@@ -1,19 +1,24 @@
-const express = require ("express");
-const colors = require("colors");
-const morgan = require("morgan");
-const logger = require("./config/winston.js");
-const router = require ("./router.js");
+const express = require('express');
+const colors = require('colors');
+const morgan = require('morgan');
+const logger = require('./config/winston');
+const db = require('./db.js');
+const router = require('./router.js');
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; //Configuramos puerto heroku
 
-//MIDDLEWARE --> SE EJECUTARÁ SIEMPRE ANTES DE HACER CUALQUIER FUNCION DE APP
-app.use(morgan("combined", {stream: logger.stream}));
-app.use(express.json());// PERMITE ENVIAR Y RECIBIR JSON DEL BODY, ES IMPRESCINDIBLE
+//Middleware
+app.use(morgan('combined', { stream: logger.stream }));
+app.use(express.json());
 
-app.get("/", (req, res) => res.send("Bienvenido a Express") );
-
+//Rutas
+app.get('/', (req, res) => {res.send('Bienvenidos a Express');});
 app.use(router);
 
-app.listen(PORT, ()=>{
-    console.log(`Server on port ${PORT}`.bgBlue.white);
-});
+//Connecting to the database
+db.then(()=>{
+    //Starting server
+        app.listen(PORT, ()=> console.log(`Server on port ${PORT}`.bgBlue.white));
+    })
+    .catch((err)=> console.log(err.message));   
